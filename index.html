@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Shoes - Aapka Feedback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#2338E8;--ink:#0F1235;--sun:#FFD23F;--red:#E5322D;--paper:#F3F5FF;--mute:#5C6088;--line:#D9DCF2}
+body{font-family:'Figtree',sans-serif;color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+background:var(--blue) repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px)}
+.card{width:100%;max-width:460px;background:#fff;border-radius:22px;padding:34px 26px 40px;position:relative;overflow:hidden;box-shadow:0 18px 0 -6px rgba(15,18,53,.35)}
+.card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:12px;background:repeating-linear-gradient(90deg,var(--ink) 0 10px,#fff 10px 16px)}
+.brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:26px}
+.brand-icon{width:46px;height:46px;border-radius:50%;background:var(--sun);display:grid;place-items:center;font-size:24px;border:2px solid var(--ink)}
+.brand-name{font-family:'Archivo Black',sans-serif;font-size:24px;letter-spacing:.5px}
+h1{font-family:'Archivo Black',sans-serif;font-weight:400;font-size:30px;line-height:1.15;text-align:center;margin-bottom:10px}
+.sub{text-align:center;color:var(--mute);font-size:15px;line-height:1.5;margin-bottom:28px}
+.screen{display:none}
+.screen.active{display:block}
+@media (prefers-reduced-motion:no-preference){.screen.active{animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}}
+
+/* stars on a lace line */
+.stars{display:flex;justify-content:center;gap:6px;position:relative;margin-bottom:10px}
+.stars::before{content:'';position:absolute;left:4%;right:4%;top:50%;border-top:3px dashed var(--line);z-index:0}
+.star{position:relative;z-index:1;background:#fff;border:none;font-size:52px;line-height:1;padding:2px 4px;cursor:pointer;color:var(--line);-webkit-text-stroke:2px #C3C7E6;transition:transform .2s}
+.star.on{color:var(--sun);-webkit-text-stroke:2px var(--ink)}
+.star:active{transform:scale(1.2)}
+.ends{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);font-weight:600;padding:0 6px}
+
+.btn{width:100%;padding:16px 20px;border-radius:12px;border:2px solid var(--ink);font:700 16px 'Figtree',sans-serif;cursor:pointer;display:block;transition:transform .15s,box-shadow .15s}
+.btn+.btn{margin-top:12px}
+.btn-main{background:var(--sun);color:var(--ink);box-shadow:0 4px 0 var(--ink)}
+.btn-wa{background:#25D366;color:var(--ink);box-shadow:0 4px 0 var(--ink)}
+.btn-alt{background:#fff;color:var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.link{background:none;border:none;color:var(--blue);font:600 14px 'Figtree',sans-serif;text-decoration:underline;cursor:pointer;display:block;margin:14px auto 0;padding:4px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+.review-box{background:var(--paper);border:2px dashed var(--blue);border-radius:14px;padding:18px;margin-bottom:18px;font-size:17px;line-height:1.55}
+.note{font-size:14px;color:var(--mute);line-height:1.5;margin-bottom:18px;text-align:center}
+
+/* improve screen */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{padding:10px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;font:600 14px 'Figtree',sans-serif;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.label{font-weight:700;font-size:14px;margin-bottom:8px;display:block}
+textarea{width:100%;min-height:190px;padding:14px;border:2px solid var(--line);border-radius:12px;font:15px/1.5 'Figtree',sans-serif;color:var(--ink);background:var(--paper);resize:vertical;margin-bottom:6px}
+textarea:focus{outline:none;border-color:var(--blue)}
+.back{background:none;border:none;color:var(--mute);font:600 14px 'Figtree',sans-serif;cursor:pointer;margin-bottom:14px;padding:4px 0}
+.big{font-size:64px;text-align:center;margin-bottom:10px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(90px);background:var(--ink);color:#fff;padding:13px 22px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:all .35s;z-index:10}
+.toast.show{transform:translateX(-50%);opacity:1}
+@media (max-width:420px){.star{font-size:44px}h1{font-size:26px}.card{padding:30px 20px 38px}}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand"><div class="brand-icon">👟</div><div class="brand-name">UK Shoes</div></div>
+
+  <!-- 1. Rating -->
+  <section id="rateScreen" class="screen active">
+    <h1>Aapka experience kaisa raha?</h1>
+    <p class="sub">Bas ek star select karo</p>
+    <div class="stars" id="stars">
+      <button class="star" aria-label="1 star">★</button>
+      <button class="star" aria-label="2 stars">★</button>
+      <button class="star" aria-label="3 stars">★</button>
+      <button class="star" aria-label="4 stars">★</button>
+      <button class="star" aria-label="5 stars">★</button>
+    </div>
+    <div class="ends"><span>Bekaar</span><span>Ekdum mast</span></div>
+  </section>
+
+  <!-- 2. Improve (3 stars or less) -->
+  <section id="improveScreen" class="screen">
+    <button class="back" id="backBtn">&larr; Rating badlo</button>
+    <h1>Hum kaise behtar kar sakte hain?</h1>
+    <p class="sub">Jo cheezein sahi nahi lagi wo select karo, message apne aap ban jayega</p>
+    <div class="chips" id="chips"></div>
+    <label class="label" for="draft">Aapka message (aap edit kar sakte ho)</label>
+    <textarea id="draft"></textarea>
+    <button class="link" id="resetDraft" hidden>Auto message dobara banao</button>
+    <button class="btn btn-wa" id="sendBtn" style="margin-top:14px">WhatsApp pe bhejo</button>
+  </section>
+
+  <!-- 3. Google (4-5 stars) -->
+  <section id="googleScreen" class="screen">
+    <div class="big">🎉</div>
+    <h1>Shukriya! Review copy ho gaya</h1>
+    <p class="note">Google page pe review box mein paste kar do. Apne words mein badalna ho toh badal sakte ho.</p>
+    <div class="review-box" id="reviewText"></div>
+    <button class="btn btn-main" id="openGoogleBtn">Google review page kholo</button>
+    <button class="btn btn-alt" id="copyBtn">Review dobara copy karo</button>
+    <button class="link" id="newReviewBtn">Doosra review suggestion do</button>
+  </section>
+
+  <!-- 4. Done (after WhatsApp) -->
+  <section id="doneScreen" class="screen">
+    <div class="big">🙏</div>
+    <h1>Shukriya, hum sudhaar karenge</h1>
+    <p class="note">Aapka message hum tak pahunch jayega. Agli visit mein behtar experience dene ki poori koshish rahegi.</p>
+    <button class="btn btn-main" onclick="location.reload()">Done</button>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== CONFIG: yahin se sab badlo ===== */
+const PLACE_ID = 'ChIJqxRQ01pzZjkRraJGCOwi7gs';
+const GOOGLE_URL = 'https://search.google.com/local/writereview?placeid=' + PLACE_ID;
+const WA_NUMBER = '918235042914'; // 91 + number, bina + aur space ke
+const SHOP = 'UK Shoes';
+
+/* ===== REVIEW PARTS: 10 + 10 + 10 = 1000 combinations ===== */
+const OPENINGS = [
+ 'Kal hi yahan se shoes liye the bhai',
+ 'Bahut din se acche shoes dhundh raha tha finally mil gaye......',
+ 'Dost ne bola tha UK Shoes jaake dekh',
+ 'Honestly expectation itni nahi thi par maza aa gaya',
+ 'Family ke saath gaya tha shopping karne',
+ 'Pehli baar yahan aaya aur pehli baar mein hi pasand aa gaya',
+ 'Office ke liye formal shoes chahiye the toh yahan chala gaya',
+ 'Sneakers lene gaya tha aur ek nahi do pair utha laya......',
+ 'Market mein kaafi shops dekhi par yahan ka collection alag hi hai',
+ 'Apne bhai ke liye shoes lene aaya tha'
+];
+const MIDDLES = [
+ 'collection bahut zyada hai aur har size aaraam se mil gaya',
+ 'staff ne bina pressure ke sab design dikhaye, size bhi sahi suggest kiya',
+ 'quality dekh ke lagta hai kaafi chalenge, sole bhi mast hai......',
+ 'price bhi theek laga mere budget mein hi mil gaya',
+ 'trial lene mein koi dikkat nahi hui, jitne pair bole utne nikaal ke diye',
+ 'fitting ekdum perfect hai aur pehen ke comfortable bhi lagta hai',
+ 'dukaan saaf suthri hai aur display mein sab kuch easily dikh jata hai',
+ 'kaam ke saath style bhi mila, dono cheezein ek hi shoe mein',
+ 'bhaiya ne honestly bataya konsa pair kitna chalega, bilkul sahi advice thi',
+ 'bacchon ke shoes ki bhi achi range hai, mere chhote ke liye bhi mil gaya'
+];
+const ENDINGS = [
+ 'Aage bhi yahin se lunga pakka',
+ 'Jo bhi shoes dhundh raha hai ek baar zaroor jaana......',
+ 'Paisa vasool raha overall',
+ 'Dosto ko bhi bol diya hai yahan aane ko',
+ 'Ab agli baar bhi yahin aaunga',
+ 'Highly recommend karunga',
+ 'Thank you UK Shoes team, maza aa gaya',
+ 'Ek baar try karo khud farak dikh jayega',
+ 'Ab shoes ka mera ek hi thikana hai ye',
+ 'Bas aise hi service banaye rakhna......'
+];
+
+/* ===== IMPROVE OPTIONS ===== */
+const ISSUES = [
+ ['Size / fitting', 'size ya fitting mein dikkat thi'],
+ ['Shoe quality', 'shoes ki quality se main khush nahi tha'],
+ ['Price', 'price mujhe zyada lagi'],
+ ['Staff behaviour', 'staff ka behaviour behtar ho sakta tha'],
+ ['Collection / variety', 'collection mein variety kam lagi'],
+ ['Billing / waiting', 'billing ya waiting mein zyada time laga'],
+ ['Exchange / return', 'exchange ya return mein dikkat aayi'],
+ ['Shop cleanliness', 'shop ki safai par dhyan dena chahiye']
+];
+
+/* ===== HELPERS ===== */
+const $ = id => document.getElementById(id);
+let rating = 0, review = '', manual = false;
+const picked = new Set();
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function copyText(text){
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(fallback);
+    else fallback();
+  } catch (e) { fallback(); }
+}
+
+/* ===== NON-REPEATING REVIEW PICKER (remembers on this device) ===== */
+function nextReview(){
+  let st = { used: [], last: [-1, -1, -1] };
+  try { st = JSON.parse(localStorage.getItem('uks_review_state')) || st; } catch (e) {}
+  if (st.used.length >= 900) st.used = [];
+  const r = n => Math.floor(Math.random() * n);
+  let o, m, e, key, tries = 0;
+  do {
+    o = r(10); m = r(10); e = r(10); key = o + '-' + m + '-' + e; tries++;
+  } while (tries < 300 && (st.used.includes(key) || o === st.last[0] || m === st.last[1] || e === st.last[2]));
+  st.used.push(key); st.last = [o, m, e];
+  try { localStorage.setItem('uks_review_state', JSON.stringify(st)); } catch (err) {}
+  return OPENINGS[o] + ' ' + MIDDLES[m] + ' ' + ENDINGS[e];
+}
+
+/* ===== STARS ===== */
+const stars = [...document.querySelectorAll('.star')];
+const paint = n => stars.forEach((s, i) => s.classList.toggle('on', i < n));
+stars.forEach((s, i) => {
+  s.addEventListener('mouseenter', () => paint(i + 1));
+  s.addEventListener('click', () => choose(i + 1));
+});
+$('stars').addEventListener('mouseleave', () => paint(rating));
+
+function choose(n){
+  rating = n; paint(n);
+  if (n >= 4) goGoogle(); else openImprove();
+}
+
+/* ===== 4-5 STARS: copy review + open Google form in one tap ===== */
+function goGoogle(){
+  review = nextReview();
+  copyText(review);                     // must run inside the tap
+  window.open(GOOGLE_URL, '_blank');    // must run inside the tap
+  $('reviewText').textContent = review;
+  show('googleScreen');
+}
+$('openGoogleBtn').addEventListener('click', () => { copyText(review); window.open(GOOGLE_URL, '_blank'); });
+$('copyBtn').addEventListener('click', () => { copyText(review); toast('Review copy ho gaya'); });
+$('newReviewBtn').addEventListener('click', () => {
+  review = nextReview(); copyText(review);
+  $('reviewText').textContent = review; toast('Naya review copy ho gaya');
+});
+
+/* ===== 1-3 STARS: improve + WhatsApp ===== */
+const chipsBox = $('chips');
+ISSUES.forEach(([label]) => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.textContent = label; b.setAttribute('aria-pressed', 'false');
+  b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', on);
+    on ? picked.add(label) : picked.delete(label);
+    if (!manual) $('draft').value = buildDraft(); else $('resetDraft').hidden = false;
+  });
+  chipsBox.appendChild(b);
+});
+
+function buildDraft(){
+  let t = 'Namaste ' + SHOP + ' team,\nMaine aapki shop ko ' + rating + '/5 rating di hai.\n\n';
+  const lines = ISSUES.filter(([l]) => picked.has(l)).map(([, txt]) => '- ' + txt);
+  if (lines.length) t += 'In cheezon mein improvement chahiye:\n' + lines.join('\n') + '\n\n';
+  else t += 'Mera feedback:\n\n';
+  return t + 'Kripya is par dhyan dein. Dhanyavaad.';
+}
+function openImprove(){
+  picked.clear(); manual = false; $('resetDraft').hidden = true;
+  chipsBox.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+  $('draft').value = buildDraft();
+  show('improveScreen');
+}
+$('draft').addEventListener('input', () => { manual = true; $('resetDraft').hidden = false; });
+$('resetDraft').addEventListener('click', () => {
+  manual = false; $('resetDraft').hidden = true; $('draft').value = buildDraft();
+});
+$('backBtn').addEventListener('click', () => { rating = 0; paint(0); show('rateScreen'); });
+$('sendBtn').addEventListener('click', () => {
+  const msg = $('draft').value.trim();
+  if (!msg) { toast('Pehle message likho'); return; }
+  const url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
+  const w = window.open(url, '_blank');
+  if (!w) location.href = url;
+  show('doneScreen');
+});
+</script>
+</body>
+</html>
